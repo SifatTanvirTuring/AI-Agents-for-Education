@@ -1,0 +1,98 @@
+{
+  "timestamp": "2025-01-10T10:35:00.000Z",
+  "status": "healthy",
+  "checks": {
+    "logging": {
+      "status": "healthy",
+      "logsInMemory": 45,
+      "lastLogTime": "2025-01-10T10:35:00.200Z",
+      "logFileSize": "15.2KB",
+      "logRotation": "enabled"
+    },
+    "fileSystem": {
+      "status": "healthy",
+      "logsDirectory": "accessible",
+      "diskSpace": "sufficient",
+      "permissions": "correct",
+      "fileCount": 4
+    },
+    "memory": {
+      "status": "healthy",
+      "heapUsed": 12345678,
+      "heapTotal": 16777216,
+      "usage": "73.6%",
+      "threshold": "90%"
+    },
+    "performance": {
+      "status": "healthy",
+      "metrics": {
+        "averageResponseTime": "650ms",
+        "memoryUsage": "42.1MB",
+        "cpuUsage": "15%",
+        "activeConnections": 0
+      },
+      "thresholds": {
+        "responseTime": "1000ms",
+        "memoryUsage": "100MB",
+        "cpuUsage": "80%"
+      }
+    },
+    "database": {
+      "status": "healthy",
+      "connection": "localStorage",
+      "operations": {
+        "reads": 8,
+        "writes": 5,
+        "errors": 0
+      },
+      "responseTime": "5ms"
+    },
+    "api": {
+      "status": "healthy",
+      "endpoints": {
+        "total": 6,
+        "healthy": 5,
+        "unhealthy": 1
+      },
+      "averageResponseTime": "650ms",
+      "errorRate": "16.7%"
+    },
+    "authentication": {
+      "status": "healthy",
+      "activeSessions": 0,
+      "totalSessions": 1,
+      "authenticationMethods": ["demo", "email"],
+      "securityLevel": "standard"
+    },
+    "telemetry": {
+      "status": "healthy",
+      "collectionEnabled": true,
+      "dataPoints": 18,
+      "storageSize": "8.5KB",
+      "transmissionStatus": "local"
+    }
+  },
+  "summary": {
+    "overallStatus": "healthy",
+    "checksPassed": 8,
+    "checksTotal": 8,
+    "lastCheckTime": "2025-01-10T10:35:00.000Z",
+    "nextCheckTime": "2025-01-10T10:36:00.000Z"
+  },
+  "recommendations": [
+    "Monitor API error rate - currently at 16.7%",
+    "Consider implementing retry logic for failed API calls",
+    "Memory usage is healthy at 73.6%",
+    "All core systems are functioning normally"
+  ],
+  "alerts": [],
+  "uptime": {
+    "startTime": "2025-01-10T10:30:00.000Z",
+    "currentTime": "2025-01-10T10:35:00.000Z",
+    "duration": "5m 0s",
+    "availability": "100%"
+  }
+}
+
+
+

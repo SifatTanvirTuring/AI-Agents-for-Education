@@ -1,0 +1,6 @@
+services:
+  eval-app:
+    build: .
+    network_mode: "host"
+    stdin_open: true
+    tty: true

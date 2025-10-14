@@ -1,0 +1,47 @@
+{
+  "telemetry": {
+    "enabled": true,
+    "target": "local",
+    "otlpEndpoint": "",
+    "outfile": "./logs/telemetry.log"
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": [
+      {
+        "type": "file",
+        "path": "./logs/application.log",
+        "maxSize": "10MB",
+        "maxFiles": 5
+      },
+      {
+        "type": "console",
+        "format": "pretty"
+      }
+    ],
+    "categories": {
+      "auth": "debug",
+      "database": "info",
+      "api": "info",
+      "performance": "warn",
+      "security": "error"
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics": {
+      "enabled": true,
+      "interval": 30000,
+      "output": "./logs/metrics.json"
+    },
+    "healthChecks": {
+      "enabled": true,
+      "interval": 60000,
+      "output": "./logs/health.json"
+    }
+  }
+}
+
+
+
