@@ -1,10 +1,15 @@
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+       git procps bash \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node dependencies
 COPY package.json ./
-# The log shows package-lock.json, but it is not provided. Using npm install.
 RUN npm install
 
 # Copy all project files
@@ -12,4 +17,3 @@ COPY . .
 
 # Set the entrypoint to run the validation script
 ENTRYPOINT ["/bin/sh"]
-# , "entrypoint.sh"
