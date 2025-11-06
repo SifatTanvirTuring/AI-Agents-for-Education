@@ -4,35 +4,18 @@ import Auth from './components/Auth.jsx';
 import EvaluationQuiz from './components/EvaluationQuiz.jsx';
 import EnhancedDashboard from './components/EnhancedDashboard.jsx';
 import { SUBJECTS } from './constants.js';
-import {
-  saveUserProgress,
-  getUserProgress,
-  subscribeToUserProgress,
-  completeOnboarding
-} from './services/enhancedDatabaseService.js';
-import {
-  evaluateQuizAnswers,
-  generateStudyPlan
-} from './services/geminiService.js';
-import {
-  onAuthStateChange,
-  logoutUser
-} from './services/authService.js';
-import {
-  saveUserProgressLocal,
-  getUserProgressLocal,
-  setDemoMode,
-  clearAllLocalData,
-  debugLocalStorage
-} from './services/localStorageService.js';
+import { saveUserProgress, getUserProgress, subscribeToUserProgress, completeOnboarding } from './services/enhancedDatabaseService.js';
+import { evaluateQuizAnswers, generateStudyPlan } from './services/geminiService.js';
+import { onAuthStateChange, logoutUser } from './services/authService.js';
+import { saveUserProgressLocal, getUserProgressLocal, setDemoMode, clearAllLocalData, debugLocalStorage } from './services/localStorageService.js';
 
 const App = () => {
   // Authentication states
   const [currentUser, setCurrentUser] = useState(null);
   const [authMode, setAuthMode] = useState(null); // 'choice', 'login', 'register'
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [allowAutoLogin, setAllowAutoLogin] = useState(false);
-
+  const [allowAutoLogin, setAllowAutoLogin] = useState(false); // Prevent automatic login
+  
   // App states
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
   const [userProgress, setUserProgress] = useState(null);
@@ -40,8 +23,7 @@ const App = () => {
 
   // Authentication flow handlers
   const handleAuthChoice = (choice) => {
-    setAllowAutoLogin(true);
-
+    setAllowAutoLogin(true); // User has interacted, allow login
     if (choice === 'demo') {
       const demoUser = {
         uid: 'demo-user',
@@ -51,12 +33,13 @@ const App = () => {
       setCurrentUser(demoUser);
       setIsAuthenticated(true);
       setDemoMode(true);
-
+      
       const existingProgress = getUserProgressLocal('demo-user');
       if (existingProgress) {
         setUserProgress(existingProgress);
         setIsOnboardingComplete(true);
       }
+      
       setIsLoading(false);
     } else if (choice === 'login' || choice === 'register') {
       setAuthMode(choice);
@@ -67,29 +50,32 @@ const App = () => {
     console.log('=== AUTH SUCCESS START ===');
     try {
       console.log('User authenticated:', user.uid, user.email, 'Role:', user.role);
+      
+      
       setCurrentUser(user);
       setIsAuthenticated(true);
-
+      
       const localProgress = getUserProgressLocal(user.uid);
       console.log('Local progress check:', {
         found: !!localProgress,
         hasOnboardingComplete: localProgress?.onboardingComplete,
         hasProfileOnboardingComplete: localProgress?.profile?.onboardingComplete
       });
-
+      
       const isOnboardingCompleteLocal = localProgress && (
-        localProgress.onboardingComplete === true ||
+        localProgress.onboardingComplete === true || 
         localProgress.profile?.onboardingComplete === true
       );
-
+      
       if (localProgress && isOnboardingCompleteLocal) {
         console.log('✅ Found complete local progress, loading immediately');
         setUserProgress(localProgress);
         setIsOnboardingComplete(true);
       } else if (localProgress) {
         console.log('⚠️ Found local progress but onboarding not marked complete');
+        console.log('Local progress:', localProgress);
       }
-
+      
       try {
         console.log('Checking Firebase for user data...');
         const userData = await getUserProgress(user.uid);
@@ -99,11 +85,11 @@ const App = () => {
           profileOnboardingComplete: userData?.profile?.onboardingComplete,
           topLevelOnboardingComplete: userData?.onboardingComplete
         });
-
+        
         if (userData) {
-          const hasCompleteOnboarding = userData.onboardingComplete === true ||
-                                        userData.profile?.onboardingComplete === true;
-
+          const hasCompleteOnboarding = userData.onboardingComplete === true || 
+                                       userData.profile?.onboardingComplete === true;
+          
           if (hasCompleteOnboarding) {
             console.log('✅ Firebase shows onboarding complete, loading data');
             setUserProgress(userData);
@@ -144,11 +130,10 @@ const App = () => {
       profile: {
         ...userData,
         email: currentUser.email,
-        userName: userData.userName,
-        examDate: userData.examDate,
+        userName: currentUser.displayName || currentUser.email,
         onboardingComplete: true,
         createdAt: new Date().toISOString(),
-        lastActive: new Date().toISOString()
+        lastActive: new Date().toISOString(),
       },
       subjects: {},
       evaluation: evaluation,
@@ -173,10 +158,12 @@ const App = () => {
     }
   };
 
+
   useEffect(() => {
     const checkFirebaseAndSetup = async () => {
       try {
         const { auth } = await import('./services/firebase.js');
+        
         if (!auth) {
           setIsLoading(false);
           setAuthMode('choice');
@@ -190,7 +177,7 @@ const App = () => {
 
         const unsubscribe = onAuthStateChange(async (user) => {
           clearTimeout(loadingTimeout);
-
+          
           if (user && allowAutoLogin) {
             const userData = {
               uid: user.uid,
@@ -220,6 +207,7 @@ const App = () => {
     };
 
     const cleanup = checkFirebaseAndSetup();
+
     return () => {
       if (cleanup && typeof cleanup.then === 'function') {
         cleanup.then(cleanupFn => cleanupFn && cleanupFn());
@@ -234,6 +222,7 @@ const App = () => {
           setUserProgress(data);
         }
       });
+      
       return () => unsubscribe();
     }
   }, [currentUser, isOnboardingComplete]);
@@ -253,10 +242,11 @@ const App = () => {
     if (authMode === 'choice' || !authMode) {
       return <AuthChoice onChoice={handleAuthChoice} />;
     }
+    
     return (
-      <Auth
-        mode={authMode}
-        onSuccess={handleAuthSuccess}
+      <Auth 
+        mode={authMode} 
+        onSuccess={handleAuthSuccess} 
         onSwitchMode={handleAuthModeSwitch}
         onGoBack={handleGoBackToChoice}
       />
@@ -266,19 +256,15 @@ const App = () => {
   return (
     <div className="min-h-screen bg-slate-900 font-sans text-slate-200">
       {!isOnboardingComplete || !userProgress ? (
-        <EvaluationQuiz onComplete={handleEvaluationComplete} />
+        <EvaluationQuiz 
+          onComplete={handleEvaluationComplete} 
+        />
       ) : (
         <EnhancedDashboard
           userProgress={userProgress}
           subjects={SUBJECTS}
           userId={currentUser.uid}
-          onLogout={async () => {
-            await logoutUser();
-            setCurrentUser(null);
-            setIsAuthenticated(false);
-            setAuthMode('choice');
-            clearAllLocalData();
-          }}
+          onLogout={async () => { await logoutUser(); setCurrentUser(null); setIsAuthenticated(false); setAuthMode('choice'); clearAllLocalData(); }}
         />
       )}
     </div>

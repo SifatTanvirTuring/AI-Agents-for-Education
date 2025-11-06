@@ -13,11 +13,11 @@ export const logoutUser = async () => {
 };
 
 export const registerUser = async (email, password) => {
-  const user = { uid: `registered-${Date.now()}`, email, displayName: email };
-  return Promise.resolve({ user });
-};
+    const user = { uid: `registered-${Date.now()}`, email, displayName: email };
+    return Promise.resolve({ user });
+}
 
 export const loginUser = async (email, password) => {
-  const user = { uid: `loggedin-${Date.now()}`, email, displayName: email };
-  return Promise.resolve({ user });
-};
+    const user = { uid: `loggedin-${Date.now()}`, email, displayName: email };
+    return Promise.resolve({ user });
+}

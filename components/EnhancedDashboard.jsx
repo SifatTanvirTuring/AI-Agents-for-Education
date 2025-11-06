@@ -6,13 +6,13 @@ import SpacedRepetitionSystem from './SpacedRepetitionSystem.jsx';
 import { CompanionIcon } from './icons/AgentIcons.jsx';
 import { getUserAnalytics, getTopicsForReview } from '../services/enhancedDatabaseService.js';
 
-const EnhancedDashboard = ({
-  userProgress,
-  subjects,
-  updateProgress,
-  updateGamification,
-  userId,
-  onLogout
+const EnhancedDashboard = ({ 
+  userProgress, 
+  subjects, 
+  updateProgress, 
+  updateGamification, 
+  userId, 
+  onLogout 
 }) => {
   const [activeTopic, setActiveTopic] = useState(null);
   const [showDiagnostic, setShowDiagnostic] = useState(null);
@@ -46,10 +46,10 @@ const EnhancedDashboard = ({
 
   const getOverallProgress = () => {
     if (!userProgress?.subjects) return 0;
-
+    
     let totalTopics = 0;
     let totalMastery = 0;
-
+    
     Object.values(userProgress.subjects).forEach(subject => {
       if (subject.topics) {
         Object.values(subject.topics).forEach(topic => {
@@ -58,21 +58,21 @@ const EnhancedDashboard = ({
         });
       }
     });
-
+    
     return totalTopics > 0 ? Math.round(totalMastery / totalTopics) : 0;
   };
 
   if (activeTopic) {
     return (
-      <StudySessionTracker
+      <StudySessionTracker 
         userId={userId}
         subjectCode={activeTopic.subject.id}
         initialTopic={activeTopic.topic.id}
       >
-        <LearningSession
-          subject={activeTopic.subject}
-          topic={activeTopic.topic}
-          onExit={() => setActiveTopic(null)}
+        <LearningSession 
+          subject={activeTopic.subject} 
+          topic={activeTopic.topic} 
+          onExit={() => setActiveTopic(null)} 
           userName={userProgress.userName || userProgress.profile?.userName}
           updateGamification={updateGamification}
           userId={userId}
@@ -109,7 +109,7 @@ const EnhancedDashboard = ({
                 {getOverallProgress()}%
               </div>
               <div className="flex-1 bg-slate-600 rounded-full h-2">
-                <div
+                <div 
                   className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
                   style={{ width: `${getOverallProgress()}%` }}
                 ></div>
@@ -131,9 +131,8 @@ const EnhancedDashboard = ({
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 p-6 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-white mb-2">
+         <h1 className="text-3xl font-bold text-white mb-2">
           Welcome back, {userProgress.userName || userProgress.profile?.userName}! 👋
         </h1>
       </main>
